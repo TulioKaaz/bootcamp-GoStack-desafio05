@@ -25,10 +25,11 @@ export const Form = styled.form`
 
   input {
     flex: 1;
-    border: 1px solid #fff;
+    border: 1px solid #ddd;
     padding: 10px 15px;
     border-radius: 4px;
     font-size: 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -51,6 +52,7 @@ export const SubmitButton = styled.button.attrs(props => ({
   padding: 0 15px;
   margin-left: 10px;
   border-radius: 4px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -67,4 +69,23 @@ export const SubmitButton = styled.button.attrs(props => ({
         animation: ${rotate} 2s linear infinite;
       }
     `}
+`;
+
+export const List = styled.ul`
+  margin-top: 30px;
+
+  li {
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    & + li {
+      border-top: 1px solid #ddd;
+    }
+
+    a {
+      color: #7159c1;
+    }
+  }
 `;
