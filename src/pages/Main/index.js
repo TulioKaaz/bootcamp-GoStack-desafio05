@@ -12,6 +12,26 @@ export default class Main extends Component {
     loading: false,
   };
 
+  // Executa tada vez que o componente é renderizado em tela.
+  // exemplo: Carregar os dados do localStorage quando renderiza a pagina.
+  componentDidMount() {
+    const repositories = localStorage.getItem('repositories');
+
+    if (repositories) {
+      this.setState({ repositories: JSON.parse(repositories) });
+    }
+  }
+
+  // Executa toda vez que algum stado do componente muda.
+  // exemplo: Salvar novos itens no localStorage.
+  componentDidUpdate(_, prevState) {
+    const { repositories } = this.state;
+
+    if (prevState.repositories !== repositories) {
+      localStorage.setItem('repositories', JSON.stringify(repositories));
+    }
+  }
+
   handleImputChange = e => {
     this.setState({ newRepo: e.target.value });
   };
