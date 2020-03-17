@@ -53,6 +53,18 @@ export default class Main extends Component {
         name: response.data.full_name,
       };
 
+      const duplicateRepository = repositories.find(repo => {
+        return repo.name === data.name;
+      });
+
+      if (duplicateRepository) {
+        this.setState({
+          loading: false,
+          error: true,
+        });
+        throw new Error('Repositório duplicado');
+      }
+
       this.setState({
         repositories: [...repositories, data],
         newRepo: '',
@@ -86,7 +98,7 @@ export default class Main extends Component {
             onChange={this.handleImputChange}
           />
 
-          <SubmitButton loading={loading}>
+          <SubmitButton load={loading}>
             {loading ? (
               <FaSpinner color="#fff" size={14} />
             ) : (
