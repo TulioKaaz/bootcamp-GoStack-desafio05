@@ -3,15 +3,22 @@ import styled, { keyframes, css } from 'styled-components';
 export const Form = styled.form`
   margin-top: 30px;
   display: flex;
+`;
 
-  input {
-    flex: 1;
-    border: 1px solid #ddd;
-    padding: 10px 15px;
-    border-radius: 4px;
-    font-size: 16px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  }
+export const Input = styled.input`
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-size: 16px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+
+  ${props =>
+    props.error &&
+    css`
+      border: 1px solid #f00;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
+    `}
 `;
 
 const rotate = keyframes`
