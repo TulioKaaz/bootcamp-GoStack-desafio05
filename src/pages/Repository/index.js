@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Loading, Owner, IssueList } from './styles';
+import { Loading, Owner, IssueList, FilterContainer, Button } from './styles';
 
 export default class Repository extends Component {
   static propTypes = {
@@ -19,11 +19,14 @@ export default class Repository extends Component {
   state = {
     repository: {},
     issues: [],
+    issueState: 'open',
     loading: true,
   };
 
   async componentDidMount() {
     const { match } = this.props;
+
+    const { issueState } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
@@ -31,7 +34,7 @@ export default class Repository extends Component {
       api.get(`/repos/${repoName}`),
       api.get(`/repos/${repoName}/issues`, {
         params: {
-          state: 'open',
+          state: issueState,
           per_page: 5,
         },
       }),
@@ -44,8 +47,32 @@ export default class Repository extends Component {
     });
   }
 
+  async componentDidUpdate(_, prevState) {
+    const { match } = this.props;
+    const { issueState } = this.state;
+
+    if (prevState.issueState !== issueState) {
+      const repoName = decodeURIComponent(match.params.repository);
+
+      const issues = await api.get(`/repos/${repoName}/issues`, {
+        params: {
+          state: issueState,
+          per_page: 5,
+        },
+      });
+
+      this.updateIssues(issues);
+    }
+  }
+
+  updateIssues = issues => {
+    this.setState({
+      issues: issues.data,
+    });
+  };
+
   render() {
-    const { repository, issues, loading } = this.state;
+    const { repository, issues, loading, issueState } = this.state;
 
     if (loading) {
       return <Loading>Carregando</Loading>;
@@ -59,6 +86,33 @@ export default class Repository extends Component {
           <h1>{repository.name}</h1>
           <p>{repository.description}</p>
         </Owner>
+
+        <FilterContainer>
+          <Button
+            type="button"
+            style={{ opacity: issueState === 'all' ? 1.0 : 0.5 }}
+            color="#7159c1"
+            onClick={() => this.setState({ issueState: 'all' })}
+          >
+            All
+          </Button>
+          <Button
+            type="button"
+            style={{ opacity: issueState === 'open' ? 1.0 : 0.5 }}
+            color="#27cf00"
+            onClick={() => this.setState({ issueState: 'open' })}
+          >
+            Open
+          </Button>
+          <Button
+            type="button"
+            style={{ opacity: issueState === 'closed' ? 1.0 : 0.5 }}
+            color="#ff2e16"
+            onClick={() => this.setState({ issueState: 'closed' })}
+          >
+            Closed
+          </Button>
+        </FilterContainer>
 
         <IssueList>
           {issues.map(issue => (
