@@ -1,11 +1,21 @@
 import React, { Component } from 'react';
+import { FaAngleLeft, FaAngleRight, FaAngleDoubleLeft } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Loading, Owner, IssueList, FilterContainer, Button } from './styles';
+import {
+  Loading,
+  Owner,
+  IssueList,
+  FilterContainer,
+  Button,
+  IssueContainer,
+  PaginateButton,
+  Page,
+} from './styles';
 
 export default class Repository extends Component {
   static propTypes = {
@@ -19,14 +29,15 @@ export default class Repository extends Component {
   state = {
     repository: {},
     issues: [],
-    issueState: 'open',
     loading: true,
+    issueState: 'open',
+    page: 1,
   };
 
   async componentDidMount() {
     const { match } = this.props;
 
-    const { issueState } = this.state;
+    const { issueState, page } = this.state;
 
     const repoName = decodeURIComponent(match.params.repository);
 
@@ -35,7 +46,8 @@ export default class Repository extends Component {
       api.get(`/repos/${repoName}/issues`, {
         params: {
           state: issueState,
-          per_page: 5,
+          page,
+          per_page: 10,
         },
       }),
     ]);
@@ -49,15 +61,16 @@ export default class Repository extends Component {
 
   async componentDidUpdate(_, prevState) {
     const { match } = this.props;
-    const { issueState } = this.state;
+    const { issueState, page } = this.state;
 
-    if (prevState.issueState !== issueState) {
+    if (prevState.issueState !== issueState || prevState.page !== page) {
       const repoName = decodeURIComponent(match.params.repository);
 
       const issues = await api.get(`/repos/${repoName}/issues`, {
         params: {
           state: issueState,
-          per_page: 5,
+          page,
+          per_page: 10,
         },
       });
 
@@ -72,7 +85,7 @@ export default class Repository extends Component {
   };
 
   render() {
-    const { repository, issues, loading, issueState } = this.state;
+    const { repository, issues, loading, issueState, page } = this.state;
 
     if (loading) {
       return <Loading>Carregando</Loading>;
@@ -81,7 +94,9 @@ export default class Repository extends Component {
     return (
       <Container>
         <Owner>
-          <Link to="/">Voltar aos Repositórios</Link>
+          <Link to="/">
+            <FaAngleDoubleLeft /> Voltar aos Repositórios
+          </Link>
           <img src={repository.owner.avatar_url} alt={repository.owner.login} />
           <h1>{repository.name}</h1>
           <p>{repository.description}</p>
@@ -114,22 +129,42 @@ export default class Repository extends Component {
           </Button>
         </FilterContainer>
 
-        <IssueList>
-          {issues.map(issue => (
-            <li key={String(issue.id)}>
-              <img src={issue.user.avatar_url} alt={issue.user.login} />
-              <div>
-                <strong>
-                  <a href={issue.html_url}>{issue.title}</a>
-                  {issue.labels.map(label => (
-                    <span key={String(label.id)}>{label.name}</span>
-                  ))}
-                </strong>
-                <p>{issue.user.login}</p>
-              </div>
-            </li>
-          ))}
-        </IssueList>
+        <IssueContainer>
+          <PaginateButton
+            disabled={page === 1}
+            onClick={() => this.setState({ page: page - 1 })}
+          >
+            <FaAngleLeft />
+          </PaginateButton>
+
+          <IssueList>
+            {issues.map(issue => (
+              <li key={String(issue.id)}>
+                <img src={issue.user.avatar_url} alt={issue.user.login} />
+                <div>
+                  <strong>
+                    <a href={issue.html_url}>{issue.title}</a>
+                    {issue.labels.map(label => (
+                      <span key={String(label.id)}>{label.name}</span>
+                    ))}
+                  </strong>
+                  <p>{issue.user.login}</p>
+                </div>
+              </li>
+            ))}
+          </IssueList>
+
+          <PaginateButton
+            disabled={issues.length < 10}
+            onClick={() => this.setState({ page: page + 1 })}
+          >
+            <FaAngleRight />
+          </PaginateButton>
+        </IssueContainer>
+
+        <Page>
+          Pagina:<span>{page}</span>
+        </Page>
       </Container>
     );
   }

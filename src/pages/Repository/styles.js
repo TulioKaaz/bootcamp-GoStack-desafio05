@@ -18,6 +18,14 @@ export const Owner = styled.header`
   a {
     color: #7159c1;
     font-size: 16px;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+
+    svg {
+      margin-right: 8px;
+      font-size: 24px;
+    }
   }
 
   img {
@@ -118,4 +126,38 @@ export const Button = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+export const IssueContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const PaginateButton = styled.button.attrs(props => ({
+  disabled: props.disabled,
+}))`
+  background: #fff;
+  margin: auto 10px;
+  color: #7159c1;
+  font-weight: bold;
+  font-size: 32px;
+
+  &[disabled] {
+    color: #bbb;
+  }
+`;
+
+export const Page = styled.div`
+  display: flex;
+  justify-content: center;
+  background: #7159c1;
+  color: #fff;
+  padding: 8px 16px;
+  margin: 10px auto 0;
+  border-radius: 4px;
+  width: 100px;
+
+  span {
+    margin-left: 4px;
+  }
 `;
