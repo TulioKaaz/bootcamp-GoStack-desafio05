@@ -49,7 +49,6 @@ Neste desafio dá [Rocketseat GoStack Bootcamp](https://rocketseat.com.br/bootca
 
 Este projeto está sob Licença MIT. Leia [LICENSE](LICENSE.md) para mais informações.
 
----
 
 ## :book:  **TulioCaz**
 
